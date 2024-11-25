@@ -110,7 +110,7 @@ class UserController
         $expiry = $now->modify('+1 hour');
 
         return $this->jwtConfig->builder()
-            ->issuedBy('Freshly-Backend')
+            ->issuedBy('umahan-Backend')
             ->permittedFor('your-application')
             ->identifiedBy(bin2hex(random_bytes(16)))
             ->issuedAt($now)

@@ -1,6 +1,6 @@
 {
-  "name": "lhiam/freshly-backend",
-  "description": "\u0016A backend server for the Freshly mobile app.",
+  "name": "umahan/backend",
+  "description": "\u0016Backend for Umahan Mobile App.",
   "version": "1.0.0",
   "autoload": {
     "psr-4": {
@@ -12,8 +12,8 @@
   },
   "authors": [
     {
-      "name": "seolyam",
-      "email": "leeyam.dev@gmail.com"
+      "name": "aishki",
+      "email": "arieru.dev@gmail.com"
     }
   ],
   "require": {

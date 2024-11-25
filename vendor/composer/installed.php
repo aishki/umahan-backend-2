@@ -1,6 +1,6 @@
 <?php return array(
     'root' => array(
-        'name' => 'lhiam/freshly-backend',
+        'name' => 'umahan/backend',
         'pretty_version' => '1.0.0',
         'version' => '1.0.0.0',
         'reference' => null,
@@ -163,7 +163,7 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'lhiam/freshly-backend' => array(
+        'umahan/backend' => array(
             'pretty_version' => '1.0.0',
             'version' => '1.0.0.0',
             'reference' => null,

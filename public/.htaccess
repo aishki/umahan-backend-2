@@ -4,9 +4,7 @@ RewriteEngine On
 
 # Set the RewriteBase to the public directory path
 
-# Adjust '/freshly-backend/public/' if your project is in a different subdirectory
-
-RewriteBase /freshly-backend/public/
+RewriteBase /umahan-backend-2/public/
 
 # Conditions to check if the requested file or directory exists
 
