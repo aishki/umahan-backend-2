@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use Slim\Factory\AppFactory;
 use App\Controllers\UserController;
@@ -13,17 +13,16 @@ if (file_exists(__DIR__ . '/../.env')) {
 }
 
 $app = AppFactory::create();
+$app->addRoutingMiddleware(); 
 $app->addBodyParsingMiddleware();
 
-// Instantiate UserController without requiring TursoClient for user handling
 $userController = new UserController();
 
-// Define routes
 $app->post('/register', [$userController, 'register']);
 $app->post('/login', [$userController, 'login']);
-// Profile routes still use AuthMiddleware (modify as needed)
 $app->get('/profile', [$userController, 'getProfile'])->add(new AuthMiddleware());
 $app->post('/profile', [$userController, 'updateProfile'])->add(new AuthMiddleware());
 
-// Run the app
+$app->addErrorMiddleware(true, true, true);
+
 $app->run();
