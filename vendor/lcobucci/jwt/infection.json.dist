@@ -1,0 +1,43 @@
+{
+    "source": {
+        "directories": ["src"]
+    },
+    "timeout": 3,
+    "logs": {
+        "text": "infection.txt"
+    },
+    "mutators": {
+        "@default": true,
+        "@function_signature": true,
+        "CastInt": {
+            "ignore": [
+                "Lcobucci\\JWT\\Signer\\Ecdsa\\MultibyteStringConverter::octetLength",
+                "Lcobucci\\JWT\\Signer\\Ecdsa\\MultibyteStringConverter::readAsn1Integer"
+            ]
+        },
+        "UnwrapSubstr": {
+            "ignore": [
+                "Lcobucci\\JWT\\Signer\\Ecdsa\\MultibyteStringConverter::preparePositiveInteger"
+            ]
+        },
+        "GreaterThan": {
+            "ignore": [
+                "Lcobucci\\JWT\\Signer\\Ecdsa\\MultibyteStringConverter::toAsn1",
+                "Lcobucci\\JWT\\Signer\\Ecdsa\\MultibyteStringConverter::preparePositiveInteger",
+                "Lcobucci\\JWT\\Signer\\Ecdsa\\MultibyteStringConverter::retrievePositiveInteger"
+            ]
+        },
+        "LessThanOrEqualTo": {
+            "ignore": [
+                "Lcobucci\\JWT\\Signer\\Ecdsa\\MultibyteStringConverter::preparePositiveInteger"
+            ]
+        },
+        "LogicalNot": {
+            "ignoreSourceCodeByRegex": [
+                "if \\(!function_exists\\('sodium_\\w+'\\)\\) \\{"
+            ]
+        }
+    },
+    "minMsi": 100,
+    "minCoveredMsi": 100
+}

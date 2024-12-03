@@ -1,0 +1,9 @@
+vendor
+phpunit.xml
+infection.txt
+coverage
+phpcs.xml
+/.phpcs.cache
+/.phpunit.result.cache
+/.phpunit.cache
+/build
