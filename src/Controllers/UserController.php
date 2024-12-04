@@ -199,7 +199,7 @@ class UserController
     {
         $now = new \DateTimeImmutable();
         $token = $this->jwtConfig->builder()
-            ->issuedBy('http://pzf.22b.mytemp.website/api/') // Replace with your domain
+            ->issuedBy('http://pzf.22b.mytemp.website/api/')
             ->issuedAt($now)
             ->expiresAt($now->modify('+1 hour'))
             ->withClaim('email', $email)
