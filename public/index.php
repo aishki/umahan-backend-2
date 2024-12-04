@@ -1,6 +1,6 @@
 <?php
 
-require '/app/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use Slim\Factory\AppFactory;
 use App\Controllers\UserController;
