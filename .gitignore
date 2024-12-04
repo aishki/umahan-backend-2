@@ -1,2 +1,29 @@
+# Composer dependencies
+/vendor/
+
+# Environment variables
 .env
-/vendor
+
+# PHPStorm project files
+.idea/
+
+# VSCode settings
+.vscode/
+
+# Logs and debug files
+*.log
+*.cache
+
+# Temporary files and directories
+/tmp/
+.DS_Store
+Thumbs.db
+
+# PHPUnit test result cache
+.phpunit.result.cache
+
+# Node.js dependencies (if applicable)
+node_modules/
+
+# Build artifacts
+/public/build/
