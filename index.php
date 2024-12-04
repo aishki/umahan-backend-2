@@ -1,14 +1,14 @@
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 use Slim\Factory\AppFactory;
 use App\Controllers\UserController;
 use App\Middleware\AuthMiddleware;
 use Dotenv\Dotenv;
 
-if (file_exists(__DIR__ . '/../.env')) {
-    $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+if (file_exists(__DIR__ . '/.env')) {
+    $dotenv = Dotenv::createImmutable(__DIR__ . '/');
     $dotenv->load();
 }
 
