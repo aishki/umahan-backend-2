@@ -1,13 +1,13 @@
 <?php return array(
     'root' => array(
-        'name' => 'umahan/backend',
+        'name' => 'umahan/backend-2',
         'pretty_version' => '1.0.0',
         'version' => '1.0.0.0',
         'reference' => null,
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'dev' => false,
+        'dev' => true,
     ),
     'versions' => array(
         'brick/math' => array(
@@ -438,7 +438,7 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'umahan/backend' => array(
+        'umahan/backend-2' => array(
             'pretty_version' => '1.0.0',
             'version' => '1.0.0.0',
             'reference' => null,
