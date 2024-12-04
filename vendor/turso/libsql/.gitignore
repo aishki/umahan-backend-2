@@ -1,6 +1,0 @@
-vendor/
-test*.db*
-.direnv
-*.cache
-.env*
-.DS_Store
