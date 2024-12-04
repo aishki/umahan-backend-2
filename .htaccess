@@ -2,10 +2,6 @@
 
 RewriteEngine On
 
-# Set the RewriteBase to the public directory path
-
-RewriteBase /umahan-backend-2/
-
 # Conditions to check if the requested file or directory exists
 
 RewriteCond %{REQUEST_FILENAME} !-f
