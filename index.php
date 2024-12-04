@@ -1,14 +1,17 @@
 <?php
 
 require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/Controllers/UserController.php';
+require __DIR__ . '/Middleware/AuthMiddleware.php'; 
+require __DIR__ . '/vendor/autoload.php'; 
 
 use Slim\Factory\AppFactory;
-use App\Controllers\UserController;
-use App\Middleware\AuthMiddleware;
+// use App\Controllers\UserController;
+// use App\Middleware\AuthMiddleware;
 use Dotenv\Dotenv;
 
 if (file_exists(__DIR__ . '/.env')) {
-    $dotenv = Dotenv::createImmutable(__DIR__ . '/');
+    $dotenv = Dotenv::createImmutable(__DIR__);
     $dotenv->load();
 }
 
@@ -16,7 +19,8 @@ $app = AppFactory::create();
 $app->addRoutingMiddleware(); 
 $app->addBodyParsingMiddleware();
 
-$userController = new UserController();
+// $userController = new UserController();
+$userController = new \App\Controllers\UserController(); 
 
 $app->post('/register', [$userController, 'register']);
 $app->post('/login', [$userController, 'login']);
