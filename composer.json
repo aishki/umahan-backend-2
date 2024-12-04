@@ -1,6 +1,6 @@
 {
   "name": "umahan/backend-2",
-  "description": "\u0016Backend for Umahan Mobile App.",
+  "description": "Backend for Umahan Mobile App.",
   "version": "1.0.0",
   "autoload": {
     "psr-4": {
@@ -8,7 +8,8 @@
     }
   },
   "scripts": {
-    "start": "php -S 0.0.0.0:8080 -t public"
+    "start": "php -S 0.0.0.0:8080 -t public",
+    "post-deploy": "composer install --no-dev --optimize-autoloader"
   },
   "authors": [
     {
