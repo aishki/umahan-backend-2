@@ -1,0 +1,16 @@
+# Enable the Rewrite Engine
+
+RewriteEngine On
+
+# Set the RewriteBase to the public directory path
+
+RewriteBase /umahan-backend-2/public/
+
+# Conditions to check if the requested file or directory exists
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirect all other requests to index.php
+
+RewriteRule ^ index.php [QSA,L]
