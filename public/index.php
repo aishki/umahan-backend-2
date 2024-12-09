@@ -1,4 +1,3 @@
-
 <?php
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -16,15 +15,15 @@ if (file_exists(__DIR__ . '/../.env')) {
     $dotenv->load();
 }
 
-    // Validate database environment variables
-    $databaseUrl = $_ENV['TURSO_DB_URL'] ?? '';
-    $authToken = $_ENV['TURSO_AUTH_TOKEN'] ?? '';
-    if (empty($databaseUrl) || empty($authToken)) {
-        throw new \Exception('Database URL or Auth Token is not set in the environment variables.');
-    }
+// Validate database environment variables
+$databaseUrl = $_ENV['TURSO_DB_URL'] ?? '';
+$authToken = $_ENV['TURSO_AUTH_TOKEN'] ?? '';
+if (empty($databaseUrl) || empty($authToken)) {
+    throw new \Exception('Database URL or Auth Token is not set in the environment variables.');
+}
 
-    // Initialize Turso client
-    $tursoClient = new TursoClient($databaseUrl, $authToken);
+// Initialize Turso client
+$tursoClient = new TursoClient($databaseUrl, $authToken);
 
 // Create Slim app
 $app = AppFactory::create();
@@ -32,10 +31,11 @@ $app->addRoutingMiddleware();
 $app->addBodyParsingMiddleware();
 
 // Controllers
-$userController = new UserController();
-$updateUserController = new UpdateUserController();
+$userController = new UserController(); // Assuming no dependencies
+$updateUserController = new UpdateUserController($tursoClient); // Pass the TursoClient dependency
 
-$app->group('/user', function ($group) use ($userController) {
+// Routes
+$app->group('/user', function ($group) use ($userController, $updateUserController) {
     $group->post('/register', [$userController, 'register']);
     $group->post('/login', [$userController, 'login']);
     $group->post('/refresh-token', [$userController, 'refreshToken']); // New route for token refresh
