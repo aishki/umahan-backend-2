@@ -38,10 +38,6 @@ $app->addBodyParsingMiddleware();
 // Controllers
 $userController = new UserController();
 
-// Instantiate UserExtraController
-$extraRepo = new UserExtraRepository($tursoClient);
-$userExtraController = new UserExtraController($extraRepo);
-
 $app->group('/user', function ($group) use ($userController) {
     $group->post('/register', [$userController, 'register']);
     $group->post('/login', [$userController, 'login']);
