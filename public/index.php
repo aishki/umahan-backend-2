@@ -4,14 +4,10 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use Slim\Factory\AppFactory;
-use App\Controllers\ProductController;
 use App\Controllers\UserController;
-use App\Controllers\UserExtraController;
-use App\Controllers\CartController;
-use App\Controllers\OrderController;
+use App\Controllers\UpdateUserController;
 use App\Middleware\AuthMiddleware;
 use App\TursoClient;
-use App\Repository\UserExtraRepository;
 use Dotenv\Dotenv;
 
 // Load environment variables
@@ -37,6 +33,7 @@ $app->addBodyParsingMiddleware();
 
 // Controllers
 $userController = new UserController();
+$updateUserController = new UpdateUserController();
 
 $app->group('/user', function ($group) use ($userController) {
     $group->post('/register', [$userController, 'register']);
@@ -44,8 +41,8 @@ $app->group('/user', function ($group) use ($userController) {
     $group->post('/refresh-token', [$userController, 'refreshToken']); // New route for token refresh
     $group->get('/profile', [$userController, 'getProfile'])->add(new AuthMiddleware());
     $group->post('/profile', [$userController, 'updateProfile'])->add(new AuthMiddleware());
-    $group->post('/update', [$userController, 'updateUser'])->add(new AuthMiddleware());
-    $group->post('/check-email', [$userController, 'checkEmailExists'])->add(new AuthMiddleware());
+    $group->post('/check-email', [$userController, 'emailCheck'])->add(new AuthMiddleware());
+    $group->post('/update', [$updateUserController, 'updateUser'])->add(new AuthMiddleware());
 });
 
 // Add error middleware for debugging

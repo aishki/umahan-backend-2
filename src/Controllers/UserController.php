@@ -211,4 +211,55 @@ class UserController
             ->getToken($this->jwtConfig->signer(), $this->jwtConfig->signingKey())
             ->toString();
     }
+
+    public function emailCheck(Request $request, Response $response, array $args): Response
+    {
+        // Extract email from query parameters
+        $queryParams = $request->getQueryParams();
+        $email = $queryParams['email'] ?? '';
+    
+        if (empty($email)) {
+            return $this->respondWithJson($response, [
+                'success' => false,
+                'message' => 'Email parameter is required.'
+            ], 400);
+        }
+    
+        // Sanitize and validate the email
+        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+    
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $this->respondWithJson($response, [
+                'success' => false,
+                'message' => 'Invalid email format.'
+            ], 400);
+        }
+    
+        try {
+            $db = new \App\TursoClient($_ENV['TURSO_DB_URL'], $_ENV['TURSO_AUTH_TOKEN']);
+    
+            // Define the SQL query to check if the email exists
+            $sql = "SELECT * FROM Users WHERE email = ?";
+            $response = $db->executeQuery($sql, [$email]);
+    
+            // Check if the email exists
+            if (isset($response['results']) && count($response['results']) > 0) {
+                return $this->respondWithJson($response, [
+                    'success' => true,
+                    'message' => 'Email exists.'
+                ], 200);
+            } else {
+                return $this->respondWithJson($response, [
+                    'success' => false,
+                    'message' => 'Email not found.'
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            error_log('Email Check Error: ' . $e->getMessage());
+            return $this->respondWithJson($response, [
+                'error' => 'Failed to check email.'
+            ], 500);
+        }
+    }
+    
 }
