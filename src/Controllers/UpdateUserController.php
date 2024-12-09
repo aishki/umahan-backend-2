@@ -2,8 +2,9 @@
 
 namespace App\Controllers;
 
-require_once 'TursoClient.php'; // Include your TursoClient class or autoload if necessary
-require_once 'vendor/autoload.php'; // If using composer for dotenv
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use App\TursoClient;
 
 use Exception;
 
