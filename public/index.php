@@ -20,15 +20,15 @@ if (file_exists(__DIR__ . '/../.env')) {
     $dotenv->load();
 }
 
-// Validate database environment variables
-$databaseUrl = $_ENV['TURSO_DB_URL'] ?? '';
-$authToken = $_ENV['TURSO_AUTH_TOKEN'] ?? '';
-if (empty($databaseUrl) || empty($authToken)) {
-    throw new \Exception('Database URL or Auth Token is not set in the environment variables.');
-}
+    // Validate database environment variables
+    $databaseUrl = $_ENV['TURSO_DB_URL'] ?? '';
+    $authToken = $_ENV['TURSO_AUTH_TOKEN'] ?? '';
+    if (empty($databaseUrl) || empty($authToken)) {
+        throw new \Exception('Database URL or Auth Token is not set in the environment variables.');
+    }
 
-// Initialize Turso client
-$tursoClient = new TursoClient($databaseUrl, $authToken);
+    // Initialize Turso client
+    $tursoClient = new TursoClient($databaseUrl, $authToken);
 
 // Create Slim app
 $app = AppFactory::create();

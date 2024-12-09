@@ -39,40 +39,48 @@ class UserController
         $data = $request->getParsedBody();
         $email = $data['email'] ?? '';
         $password = $data['password'] ?? '';
-
+    
         if (empty($email) || empty($password)) {
             return $this->respondWithJson($response, ['error' => 'Email and password are required.'], 400);
         }
-
+    
         try {
-            $res = $this->client->post('http://your-external-api.com/validate.php', [
+            // Validate user credentials via external API
+            $res = $this->client->post('http://pzf.22b.mytemp.website/api/validate.php', [
                 'form_params' => [
                     'api_key' => $this->apiKey,
                     'email' => $email,
                     'password' => $password,
                 ]
             ]);
-
+    
             $body = json_decode($res->getBody(), true);
-
+    
             if ($body['success'] ?? false) {
-                // Check or insert into Turso DB
                 $db = new \App\TursoClient($_ENV['TURSO_DB_URL'], $_ENV['TURSO_AUTH_TOKEN']);
-                $checkUserSql = 'SELECT userType FROM users WHERE email = ?';
+                
+                // Check if the user exists in Turso DB
+                $checkUserSql = 'SELECT email, userType FROM Users WHERE email = ?';
                 $result = $db->executeQuery($checkUserSql, [$email]);
-
-                if (empty($result['results'][0]['response']['result']['rows'])) {
-                    // Redirect to account category selection
-                    return $this->respondWithJson($response, [
-                        'success' => true,
-                        'redirect' => 'account_category'
-                    ], 200);
+    
+                $rows = $result['results'][0]['response']['result']['rows'] ?? [];
+                $userType = $rows[0]['userType'] ?? null;
+    
+                if (empty($rows)) {
+                    // Insert user into Turso DB with a default "unknown" userType
+                    $insertUserSql = 'INSERT INTO Users (email, userType) VALUES (?, ?)';
+                    $db->executeQuery($insertUserSql, [$email, 'unknown']);
+                    $userType = 'unknown';
                 }
-
-                $userType = $result['results'][0]['response']['result']['rows'][0]['value'];
+    
+                // Generate JWT Token
+                $jwtToken = $this->generateJwtToken($email);
+    
                 return $this->respondWithJson($response, [
                     'success' => true,
-                    'userType' => $userType
+                    'token' => $jwtToken,
+                    'userType' => $userType,
+                    'message' => 'User logged in successfully.'
                 ], 200);
             } else {
                 return $this->respondWithJson($response, [
@@ -81,7 +89,108 @@ class UserController
                 ], 401);
             }
         } catch (\Exception $e) {
+            error_log('Login Error: ' . $e->getMessage());
             return $this->respondWithJson($response, ['error' => 'Login failed.'], 500);
+        }
+    }
+    
+
+    public function register(Request $request, Response $response, array $args): Response
+    {
+        $data = $request->getParsedBody();
+        $firstName = $data['first_name'] ?? '';
+        $lastName = $data['last_name'] ?? '';
+        $email = $data['email'] ?? '';
+        $password = $data['password'] ?? '';
+
+        if (empty($firstName) || empty($lastName) || empty($email) || empty($password)) {
+            return $this->respondWithJson($response, ['error' => 'All fields are required.'], 400);
+        }
+
+        try {
+            $res = $this->client->post('http://pzf.22b.mytemp.website/api/register.php', [
+                'form_params' => [
+                    'api_key' => $this->apiKey,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'email' => $email,
+                    'password' => $password,
+                ]
+            ]);
+
+            $body = json_decode($res->getBody(), true);
+
+            if ($body['success'] ?? false) {
+                $jwtToken = $this->generateJwtToken($email);
+                $refreshToken = bin2hex(random_bytes(32));
+
+                // Sync user in the local database
+                $db = new \App\TursoClient($_ENV['TURSO_DB_URL'], $_ENV['TURSO_AUTH_TOKEN']);
+                $checkUserSql = 'SELECT email FROM users WHERE email = ?';
+                $result = $db->executeQuery($checkUserSql, [$email]);
+
+                if (empty($result['results'][0]['response']['result']['rows'])) {
+                    // Insert user into local DB
+                    $insertUserSql = 'INSERT INTO users (email, refresh_token) VALUES (?, ?)';
+                    $db->executeQuery($insertUserSql, [$email, $refreshToken]);
+                } else {
+                    // Update refresh token for existing user
+                    $updateTokenSql = 'UPDATE users SET refresh_token = ? WHERE email = ?';
+                    $db->executeQuery($updateTokenSql, [$refreshToken, $email]);
+                }
+
+                return $this->respondWithJson($response, [
+                    'success' => true,
+                    'message' => 'User registered successfully.',
+                    'token' => $jwtToken,
+                    'refreshToken' => $refreshToken
+                ], 200);
+            } else {
+                return $this->respondWithJson($response, [
+                    'success' => false,
+                    'message' => $body['message'] ?? 'Registration failed.'
+                ], 400);
+            }
+        } catch (\Exception $e) {
+            error_log('Registration Error: ' . $e->getMessage());
+            return $this->respondWithJson($response, ['error' => 'Registration failed.'], 500);
+        }
+    }
+
+    public function refreshToken(Request $request, Response $response, array $args): Response
+    {
+        $data = $request->getParsedBody();
+        $refreshToken = $data['refresh_token'] ?? '';
+
+        if (empty($refreshToken)) {
+            return $this->respondWithJson($response, ['error' => 'Refresh token is required.'], 400);
+        }
+
+        try {
+            $sql = 'SELECT email FROM users WHERE refresh_token = ?';
+            $db = new \App\TursoClient($_ENV['TURSO_DB_URL'], $_ENV['TURSO_AUTH_TOKEN']);
+            $result = $db->executeQuery($sql, [$refreshToken]);
+            $rows = $result['results'][0]['response']['result']['rows'] ?? [];
+
+            if (empty($rows)) {
+                return $this->respondWithJson($response, ['error' => 'Invalid refresh token.'], 401);
+            }
+
+            $email = $rows[0][0]['value'];
+            $newJwtToken = $this->generateJwtToken($email);
+            $newRefreshToken = bin2hex(random_bytes(32));
+
+            $updateSql = 'UPDATE users SET refresh_token = ? WHERE email = ?';
+            $db->executeQuery($updateSql, [$newRefreshToken, $email]);
+
+            return $this->respondWithJson($response, [
+                'success' => true,
+                'token' => $newJwtToken,
+                'refreshToken' => $newRefreshToken
+            ], 200);
+        } catch (\Exception $e) {
+            error_log('Refresh Token Error: ' . $e->getMessage());
+            return $this->respondWithJson($response, ['error' => 'Failed to refresh token.'], 500);
         }
     }
 
@@ -89,5 +198,17 @@ class UserController
     {
         $response->getBody()->write(json_encode($data));
         return $response->withHeader('Content-Type', 'application/json')->withStatus($status);
+    }
+
+    private function generateJwtToken(string $email): string
+    {
+        $now = new \DateTimeImmutable();
+        return $this->jwtConfig->builder()
+            ->issuedBy('https://umahan-backend-2-production.up.railway.app/')
+            ->issuedAt($now)
+            ->expiresAt($now->modify('+1 hour'))
+            ->withClaim('email', $email)
+            ->getToken($this->jwtConfig->signer(), $this->jwtConfig->signingKey())
+            ->toString();
     }
 }
