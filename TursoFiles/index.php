@@ -27,12 +27,16 @@ $app->addBodyParsingMiddleware();
 
 
 $userController = new UserController($tursoClient);
+$updateUserController = new UpdateUserController($tursoClient);
 
 
 $app->post('/register', [$userController, 'register']);
 $app->post('/login', [$userController, 'login']);
+$app->post('/refresh-token', [$userController, 'refreshToken']); // New route for token refresh
 $app->get('/profile', [$userController, 'getProfile'])->add(new AuthMiddleware());
 $app->post('/profile', [$userController, 'updateProfile'])->add(new AuthMiddleware());
+$app->post('/check-email', [$userController, 'emailCheck'])->add(new AuthMiddleware());
+$app->post('/update', [$updateUserController, 'updateUser'])->add(new AuthMiddleware());
 
 
 
