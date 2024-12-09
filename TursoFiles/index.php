@@ -4,6 +4,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Slim\Factory\AppFactory;
 use App\TursoClient;
+use App\Controllers\UpdateUserController;
 use App\Controllers\UserController;
 use App\Middleware\AuthMiddleware;
 use Dotenv\Dotenv;
