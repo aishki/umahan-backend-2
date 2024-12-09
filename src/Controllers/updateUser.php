@@ -1,4 +1,7 @@
 <?php
+
+namespace App\Controllers;
+
 require_once 'TursoClient.php'; // Include your TursoClient class or autoload if necessary
 require_once 'vendor/autoload.php'; // If using composer for dotenv
 

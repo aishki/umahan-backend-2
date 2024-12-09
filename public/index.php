@@ -44,6 +44,8 @@ $app->group('/user', function ($group) use ($userController) {
     $group->post('/refresh-token', [$userController, 'refreshToken']); // New route for token refresh
     $group->get('/profile', [$userController, 'getProfile'])->add(new AuthMiddleware());
     $group->post('/profile', [$userController, 'updateProfile'])->add(new AuthMiddleware());
+    $group->post('/update', [$userController, 'updateUser'])->add(new AuthMiddleware());
+    $group->post('/check-email', [$userController, 'checkEmailExists'])->add(new AuthMiddleware());
 });
 
 // Add error middleware for debugging

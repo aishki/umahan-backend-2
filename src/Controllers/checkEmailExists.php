@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Controllers;
+
 require_once 'vendor/autoload.php'; // If using composer
 require_once 'TursoClient.php'; // Include your TursoClient class
 
