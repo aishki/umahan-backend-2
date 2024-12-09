@@ -54,11 +54,11 @@ $app->group('/user', function ($group) use ($userController) {
 $app->addErrorMiddleware(true, true, true);
 
 // Test route for debugging purposes
-$app->get('/test-products', function ($request, $response) use ($tursoClient) {
-    $sql = 'SELECT * FROM products';
-    $productResult = $tursoClient->executeQuery($sql);
-    $response->getBody()->write(json_encode($productResult));
-    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+$app->get('/test-user', function ($request, $response) use ($tursoClient) {
+    $user = $tursoClient->executeQuery("SELECT * FROM Users WHERE email = 'arieru.dev@gmail.com'");
+
+    $response->getBody()->write(json_encode($user));
+    return $response->withHeader('Content-Type', 'application/json');
 });
 
 // Run the app
