@@ -5,7 +5,6 @@ namespace App\Controllers;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use App\TursoClient;
-use Dotenv\Dotenv;
 
 
 use Exception;
@@ -16,10 +15,6 @@ class UpdateUserController
 
     public function __construct()
     {
-        // Load environment variables
-        $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__);
-        $dotenv->load();
-
         // Validate database environment variables
         $databaseUrl = $_ENV['TURSO_DB_URL'] ?? '';
         $authToken = $_ENV['TURSO_AUTH_TOKEN'] ?? '';
